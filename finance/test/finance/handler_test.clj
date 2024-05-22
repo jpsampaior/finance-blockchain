@@ -1,5 +1,5 @@
 (ns finance.handler-test
-  (:require [clojure.test :refer :all]
+  (:require [midje.sweet	:refer	:all]
             [ring.mock.request :as mock]
             [finance.handler :refer :all]))
 
