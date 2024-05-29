@@ -1,18 +1,27 @@
 (ns finance.handler
   (:require [compojure.core :refer :all]
             [compojure.route :as route]
-            [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
-            [cheshire.core :as	json]))
+            [ring.middleware.defaults :refer [wrap-defaults api-defaults]]
+            [ring.middleware.json :refer [wrap-json-body]]
+            [cheshire.core :as	json]
+            [finance.db :as db]
+            [finance.transactions :as transactions]))
 
-(defn balance-as-json []
-  {:headers {"Content-Type"
-             "application/json; charset=utf-8"}
-   :body (json/generate-string {:balance 0})})
+(defn as-json [content & [status]]
+  {:status (or status 200)
+   :headers {"Content-Type" "application/json; charset=utf-8"}
+   :body (json/generate-string content)})
 
 (defroutes app-routes
   (GET "/" [] "Finance API")
-  (GET "/balance" [] (balance-as-json))
+  (GET "/balance" [] (as-json {:balance (db/balance)}))
+  (POST "/transactions" request 
+    (if (transactions/valid? (:body request))
+          (-> (db/register (:body request))
+              (as-json 201))
+        (as-json {:message "Invalid Request"} 422)))
   (route/not-found "Resource not found"))
 
 (def app
-  (wrap-defaults app-routes site-defaults))
+  (-> (wrap-defaults app-routes api-defaults)
+      (wrap-json-body {:keywords? true :bigdecimals? true})))
