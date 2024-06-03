@@ -15,6 +15,7 @@
 (defroutes app-routes
   (GET "/" [] "Finance API")
   (GET "/balance" [] (as-json {:balance (db/balance)}))
+  (GET "/transactions" [] (as-json {:transactions (db/transactions)}))
   (POST "/transactions" request 
     (if (transactions/valid? (:body request))
           (-> (db/register (:body request))
