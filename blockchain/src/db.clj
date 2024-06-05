@@ -1,29 +1,25 @@
 (ns finance.db)
 
-(defn expenditure? [transaction]
-  (= (:type transaction) "expenditure"))
-
-(defn calculate [total transaction]
-  (let [amount (:value transaction)]
-    (if (expenditure? transaction)
-      (- total amount)
-      (+ total amount))))
-
 (def record
   (atom []))
 
 (defn balance []
-  (println "Current transactions:" @record) ;; Adiciona mensagem de depuração
+  (println "Current Block Chain:" @record) ;; Adiciona mensagem de depuração
   (reduce calculate 0 @record))
 
-(defn clear-transactions []
+(defn mine [nonce prev_id data prev_hash]
+  (let [block conj nonce (+ prev_id 1) data prev_hash])
+
+)
+
+(defn clear-blockchain []
   (reset! record []))
 
-(defn transactions []
-  @record)
+(defn blockchain []
+    @record)
 
-(defn register [transaction]
-  (let [updated-collection (swap! record conj transaction)]
-    (println "Registered transaction:" transaction) ;; Adiciona mensagem de depuração
+(defn register [block]
+  (let [updated-collection (swap! record conj block)]
+    (println "Registered block:" block) ;; Adiciona mensagem de depuração
     (println "Updated collection:" @record) ;; Adiciona mensagem de depuração
-    (merge transaction {:id (count updated-collection)})))
+    (merge block {:id (count updated-collection)})))

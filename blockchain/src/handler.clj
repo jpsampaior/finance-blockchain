@@ -1,11 +1,11 @@
-(ns finance.handler
+(ns blockchain.handler
   (:require [compojure.core :refer :all]
             [compojure.route :as route]
             [ring.middleware.defaults :refer [wrap-defaults api-defaults]]
             [ring.middleware.json :refer [wrap-json-body]]
             [cheshire.core :as	json]
-            [finance.db :as db]
-            [finance.transactions :as transactions]))
+            [blockchain.db :as db]
+            [blockchain.transactions :as transactions]))
 
 (defn as-json [content & [status]]
   {:status (or status 200)
@@ -14,9 +14,13 @@
 
 (defroutes app-routes
   (GET "/" [] "BlockChain")
-  (GET "/blockchain" [] (as-json {:balance (db/balance)}))
-  (GET "/transactions" [] (as-json {:transactions (db/transactions)}))
-
+  (GET "/blockchain" [] (as-json {:blockchain (db/blockchain)}))
+  (GET "/mine-block" [] (as-json {:blockchain (db/blockchain)})) ; ajustar isso
+  (POST "/new-block" request 
+    (if (transactions/valid? (:body request))
+          (-> (db/register (:body request))
+              (as-json 201))
+        (as-json {:message "Invalid Request"} 422)))
   (route/not-found "Resource not found"))
 
 (def app

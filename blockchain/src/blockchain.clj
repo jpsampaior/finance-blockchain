@@ -1,7 +1,7 @@
-(ns finance.transactions)
+(ns blockchain.transactions)
 
-(defn valid?
-  [transaction]
+(defn valid?   ; adicionar logica da blockchain
+  [block]
   (and
     (contains? transaction :value)
     (number? (:value transaction))

@@ -1,6 +1,6 @@
-(ns	finance.auxiliaries
+(ns	blockchain.auxiliaries
 		(:require [ring.adapter.jetty :refer [run-jetty]]
-				  [financeiro.handler :refer [app]]
+				  [blockchain.handler :refer [app]]
 				  [cheshire.core :as json]
 				  [clj-http.client :as http]))
 
