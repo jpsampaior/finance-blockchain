@@ -4,8 +4,7 @@
             [ring.middleware.defaults :refer [wrap-defaults api-defaults]]
             [ring.middleware.json :refer [wrap-json-body]]
             [cheshire.core :as	json]
-            [blockchain.db :as db]
-            [blockchain.transactions :as transactions]))
+            [blockchain.db :as db]))
 
 (defn as-json [content & [status]]
   {:status (or status 200)
@@ -13,14 +12,8 @@
    :body (json/generate-string content)})
 
 (defroutes app-routes
-  (GET "/" [] "BlockChain")
-  (GET "/blockchain" [] (as-json {:blockchain (db/blockchain)}))
-  (GET "/mine-block" [] (as-json {:blockchain (db/blockchain)})) ; ajustar isso
-  (POST "/new-block" request 
-    (if (transactions/valid? (:body request))
-          (-> (db/register (:body request))
-              (as-json 201))
-        (as-json {:message "Invalid Request"} 422)))
+  (GET "/blockchain" [] (as-json (db/blockchain)))
+  (POST "/new-block" request (-> (db/register (:body request))(as-json 201)))  
   (route/not-found "Resource not found"))
 
 (def app
