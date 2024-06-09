@@ -4,7 +4,8 @@
             [ring.middleware.defaults :refer [wrap-defaults api-defaults]]
             [ring.middleware.json :refer [wrap-json-body]]
             [cheshire.core :as	json]
-            [blockchain.db :as db]))
+            [blockchain.db :as db]
+            [ring.middleware.cors :refer [wrap-cors]]))
 
 (defn as-json [content & [status]]
   {:status (or status 200)
@@ -18,4 +19,6 @@
 
 (def app
   (-> (wrap-defaults app-routes api-defaults)
-      (wrap-json-body {:keywords? true :bigdecimals? true})))
+      (wrap-json-body {:keywords? true :bigdecimals? true})
+      (wrap-cors :access-control-allow-origin [#"http://localhost:5173"]
+                 :access-control-allow-methods [:get :post :put :delete])))

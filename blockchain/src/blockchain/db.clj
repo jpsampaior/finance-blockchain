@@ -22,7 +22,6 @@
      :hash hash
      :transactions transactions}]
      (swap! record conj new-block)
-     (println new-block)
      new-block
    ))
 

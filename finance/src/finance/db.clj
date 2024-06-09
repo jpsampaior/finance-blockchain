@@ -13,7 +13,6 @@
   (atom []))
 
 (defn balance []
-  (println "Current transactions:" @record) ;; Adiciona mensagem de depuração
   (reduce calculate 0 @record))
 
 (defn clear-transactions []
@@ -23,7 +22,4 @@
   @record)
 
 (defn register [transaction]
-  (let [updated-collection (swap! record conj transaction)]
-    (println "Registered transaction:" transaction) ;; Adiciona mensagem de depuração
-    (println "Updated collection:" @record) ;; Adiciona mensagem de depuração
-    (merge transaction {:id (count updated-collection)})))
+  (swap! record conj (merge transaction {:id (+ (count @record) 1)})))
